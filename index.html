@@ -36,7 +36,7 @@
   .hero-tag::before { content:'●'; font-size:7px; animation:blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(50px,12vw,112px); line-height:0.92; letter-spacing:2px; }
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(42px,10vw,112px); line-height:0.92; letter-spacing:2px; }
   h1 .wh  { color:var(--white); display:block; }
   h1 .bl  { color:var(--accent); display:block; }
 
@@ -55,6 +55,7 @@
   .stat-item:last-child { border-right:none; }
   .stat-num { font-family:'Bebas Neue',sans-serif; font-size:30px; color:var(--accent); line-height:1; }
   .stat-label { font-size:10px; color:rgba(245,244,240,0.3); margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; line-height:1.3; }
+  .stat-num.plain { font-family:'Manrope',sans-serif; font-size:22px; }
 
   /* SECTIONS */
   section { padding:72px 20px; }
@@ -102,7 +103,20 @@
   .price-card:not(.featured) .price-btn:hover { background:rgba(255,255,255,0.13); }
   .price-card.featured .price-btn { background:#fff; color:var(--accent); }
 
-  /* FORM */
+  /* PRICING - no support badge */
+  .no-support { display:flex; align-items:center; gap:6px; font-size:12px; color:#f87171; font-weight:600; margin-bottom:14px; margin-top:4px; padding:8px 12px; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:8px; }
+
+  /* PLAN SELECTOR in form */
+  .plan-selector { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .plan-opt { border:2px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px 12px; cursor:pointer; transition:all 0.2s; text-align:center; background:rgba(255,255,255,0.03); }
+  .plan-opt:hover { border-color:rgba(26,107,255,0.4); }
+  .plan-opt.selected { border-color:var(--accent); background:rgba(26,107,255,0.08); }
+  .plan-opt.selected.premium { border-color:var(--accent2); background:rgba(0,212,170,0.08); }
+  .plan-opt-price { font-family:'Bebas Neue',sans-serif; font-size:24px; line-height:1; margin-bottom:2px; }
+  .plan-opt.selected .plan-opt-price { color:var(--accent); }
+  .plan-opt.selected.premium .plan-opt-price { color:var(--accent2); }
+  .plan-opt-name { font-size:11px; font-weight:700; color:rgba(245,244,240,0.5); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+  .plan-opt-sub { font-size:10px; color:rgba(245,244,240,0.35); line-height:1.3; }
   .form-section { background:#0d0d0d; }
   .form-wrapper { display:grid; grid-template-columns:1fr 1fr; gap:64px; margin-top:48px; align-items:start; }
   .form-info { position:sticky; top:32px; }
@@ -210,7 +224,7 @@
       <div class="stat-label">Разовая оплата</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">∞</div>
+      <div class="stat-num plain">∞</div>
       <div class="stat-label">Клиентов</div>
     </div>
     <div class="stat-item">
@@ -270,12 +284,12 @@
       <div class="step">
         <div class="step-num">01</div>
         <div class="step-title">Заполняешь бриф</div>
-        <div class="step-desc">Имя, название зала, адрес, логотип, цена занятия и типы тренировок — 5 минут</div>
+        <div class="step-desc">Имя, название зала, адрес, логотип, цена занятия и типы тренировок — 1–2 минуты</div>
       </div>
       <div class="step">
         <div class="step-num">02</div>
         <div class="step-title">Связываемся</div>
-        <div class="step-desc">Уточняем детали и договариваемся об условиях. Быстрые ответы — не заставляю ждать</div>
+        <div class="step-desc">Твой запрос — мой приоритет. Отвечаю быстро в течение дня</div>
       </div>
       <div class="step">
         <div class="step-num">03</div>
@@ -310,6 +324,7 @@
           <li class="pf"><span class="pcheck">✓</span> База клиентов</li>
           <li class="pf"><span class="pcheck">✓</span> Инструкция по работе</li>
         </ul>
+        <div class="no-support">✕ Без дальнейшей поддержки и новых функций</div>
         <a href="#order" class="price-btn">Заказать</a>
       </div>
       <div class="price-card featured">
@@ -388,11 +403,20 @@
             <input type="number" class="fi" placeholder="2000" required name="price" min="100">
           </div>
           <div class="form-group">
-            <label class="form-label">Тариф</label>
-            <select class="fs" name="plan">
-              <option value="basic">Базовый — 7 500 ₽</option>
-              <option value="support" selected>С поддержкой — 10 000 ₽ + 2 500 ₽/мес</option>
-            </select>
+            <label class="form-label">Выбери тариф *</label>
+            <div class="plan-selector" id="planSelector">
+              <div class="plan-opt" data-plan="basic" onclick="selectPlan('basic')">
+                <div class="plan-opt-name">Базовый</div>
+                <div class="plan-opt-price">7 500 ₽</div>
+                <div class="plan-opt-sub">разовая оплата<br>без поддержки</div>
+              </div>
+              <div class="plan-opt premium selected" data-plan="support" onclick="selectPlan('support')">
+                <div class="plan-opt-name">🔥 С поддержкой</div>
+                <div class="plan-opt-price">10 000 ₽</div>
+                <div class="plan-opt-sub">+ 2 500 ₽/мес<br>поддержка и обновления</div>
+              </div>
+            </div>
+            <input type="hidden" id="planVal" name="plan" value="support">
           </div>
           <div class="form-group">
             <label class="form-label">Комментарий</label>
@@ -415,6 +439,13 @@
 </footer>
 
 <script>
+  // Plan selector
+  function selectPlan(plan) {
+    document.querySelectorAll('.plan-opt').forEach(function(el) { el.classList.remove('selected'); });
+    document.querySelector('[data-plan="' + plan + '"]').classList.add('selected');
+    document.getElementById('planVal').value = plan;
+  }
+
   // Training type tags
   const types = [];
   const wrap = document.getElementById('typesWrap');
